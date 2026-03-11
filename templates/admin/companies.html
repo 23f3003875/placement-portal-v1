@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Manage Companies{% endblock %}
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 sidebar p-3 d-none d-md-block">
+      <p class="text-white-50 small fw-bold text-uppercase px-2 mb-1">Admin Menu</p>
+      <a href="{{ url_for('admin_dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+      <a href="{{ url_for('admin_companies') }}" class="active"><i class="bi bi-building me-2"></i>Companies</a>
+      <a href="{{ url_for('admin_drives') }}"><i class="bi bi-briefcase me-2"></i>Drives</a>
+      <a href="{{ url_for('admin_students') }}"><i class="bi bi-people me-2"></i>Students</a>
+      <a href="{{ url_for('admin_applications') }}"><i class="bi bi-file-earmark-text me-2"></i>Applications</a>
+      <a href="{{ url_for('admin_search') }}"><i class="bi bi-search me-2"></i>Search</a>
+      <hr style="border-color:#444;">
+      <a href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a>
+    </div>
+    <div class="col-md-10 p-4">
+      <h2 class="fw-bold mb-4"><i class="bi bi-building me-2 text-success"></i>Manage Companies</h2>
+      <div class="mb-3">
+        <a href="{{ url_for('admin_companies', status='all') }}" class="btn btn-sm {{ 'btn-dark' if filter_status=='all' else 'btn-outline-dark' }} me-1">All</a>
+        <a href="{{ url_for('admin_companies', status='pending') }}" class="btn btn-sm {{ 'btn-warning' if filter_status=='pending' else 'btn-outline-warning' }} me-1">Pending</a>
+        <a href="{{ url_for('admin_companies', status='approved') }}" class="btn btn-sm {{ 'btn-success' if filter_status=='approved' else 'btn-outline-success' }} me-1">Approved</a>
+        <a href="{{ url_for('admin_companies', status='rejected') }}" class="btn btn-sm {{ 'btn-danger' if filter_status=='rejected' else 'btn-outline-danger' }} me-1">Rejected</a>
+        <a href="{{ url_for('admin_companies', status='blacklisted') }}" class="btn btn-sm {{ 'btn-secondary' if filter_status=='blacklisted' else 'btn-outline-secondary' }}">Blacklisted</a>
+      </div>
+      <div class="card">
+        <div class="card-body p-0">
+          {% if companies %}
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr><th>#</th><th>Company</th><th>Email</th><th>HR Contact</th><th>Industry</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+              {% for c in companies %}
+              <tr>
+                <td>{{ c['id'] }}</td>
+                <td class="fw-semibold">{{ c['company_name'] }}</td>
+                <td>{{ c['email'] }}</td>
+                <td>{{ c['hr_contact'] or '—' }}</td>
+                <td>{{ c['industry'] or '—' }}</td>
+                <td><span class="badge badge-{{ c['approval_status'] }}">{{ c['approval_status'] | capitalize }}</span></td>
+                <td>
+                  {% if c['approval_status'] != 'approved' and c['approval_status'] != 'blacklisted' %}
+                  <form method="POST" action="{{ url_for('admin_approve_company', cid=c['id']) }}" class="d-inline">
+                    <button class="btn btn-success btn-sm" title="Approve"><i class="bi bi-check-lg"></i></button>
+                  </form>
+                  {% endif %}
+                  {% if c['approval_status'] == 'pending' %}
+                  <form method="POST" action="{{ url_for('admin_reject_company', cid=c['id']) }}" class="d-inline">
+                    <button class="btn btn-warning btn-sm" title="Reject"><i class="bi bi-x-lg"></i></button>
+                  </form>
+                  {% endif %}
+                  {% if c['approval_status'] != 'blacklisted' %}
+                  <form method="POST" action="{{ url_for('admin_blacklist_company', cid=c['id']) }}" class="d-inline">
+                    <button class="btn btn-danger btn-sm" title="Blacklist"
+                            onclick="return confirm('Blacklist this company?')"><i class="bi bi-slash-circle"></i></button>
+                  </form>
+                  {% endif %}
+                  <form method="POST" action="{{ url_for('admin_delete_company', cid=c['id']) }}" class="d-inline">
+                    <button class="btn btn-outline-danger btn-sm" title="Delete"
+                            onclick="return confirm('Permanently delete this company?')"><i class="bi bi-trash"></i></button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <p class="text-muted text-center py-5">No companies found.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

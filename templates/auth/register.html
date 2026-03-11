@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Register - Placement Portal{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+      <div class="card p-4">
+        <div class="text-center mb-4">
+          <i class="bi bi-person-plus-fill display-5 text-primary"></i>
+          <h3 class="fw-bold mt-2">Create Account</h3>
+        </div>
+        <form method="POST" action="{{ url_for('register') }}">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">I am registering as</label>
+            <select name="role" id="roleSelect" class="form-select" required>
+              <option value="">-- Select Role --</option>
+              <option value="student">Student</option>
+              <option value="company">Company / Recruiter</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Full Name</label>
+            <input type="text" name="name" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Email Address</label>
+            <input type="email" name="email" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Password</label>
+            <input type="password" name="password" class="form-control" required minlength="6">
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Confirm Password</label>
+            <input type="password" name="confirm_password" class="form-control" required>
+          </div>
+
+          <div id="studentFields" style="display:none;">
+            <hr><p class="fw-bold text-muted small">Student Details</p>
+            <div class="mb-3">
+              <label class="form-label">Roll Number</label>
+              <input type="text" name="roll_number" class="form-control" placeholder="e.g. 21CS001">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Branch / Department</label>
+              <input type="text" name="branch" class="form-control" placeholder="e.g. Computer Science">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Phone Number</label>
+              <input type="tel" name="phone" class="form-control">
+            </div>
+          </div>
+
+          <div id="companyFields" style="display:none;">
+            <hr><p class="fw-bold text-muted small">Company Details</p>
+            <div class="mb-3">
+              <label class="form-label">Company Name <span class="text-danger">*</span></label>
+              <input type="text" name="company_name" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">HR Contact Name</label>
+              <input type="text" name="hr_contact" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Company Website</label>
+              <input type="url" name="website" class="form-control" placeholder="https://...">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Industry</label>
+              <input type="text" name="industry" class="form-control" placeholder="e.g. Information Technology">
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100 py-2 mt-2">
+            <i class="bi bi-check-circle me-2"></i>Register
+          </button>
+        </form>
+        <hr>
+        <p class="text-center text-muted small mb-0">
+          Already have an account? <a href="{{ url_for('login') }}">Login here</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.getElementById('roleSelect').addEventListener('change', function () {
+    document.getElementById('studentFields').style.display = this.value === 'student' ? 'block' : 'none';
+    document.getElementById('companyFields').style.display = this.value === 'company' ? 'block' : 'none';
+  });
+</script>
+{% endblock %}

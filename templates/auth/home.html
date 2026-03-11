@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Welcome - Placement Portal{% endblock %}
+{% block content %}
+<div class="container text-center py-5">
+  <i class="bi bi-mortarboard-fill display-1 text-primary"></i>
+  <h1 class="display-4 fw-bold mt-3">Campus Placement Portal</h1>
+  <p class="lead text-muted">Connecting students with top companies for their dream careers.</p>
+  <hr class="my-4 w-25 mx-auto">
+  <div class="d-flex justify-content-center gap-3">
+    <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg px-5">
+      <i class="bi bi-box-arrow-in-right me-2"></i>Login
+    </a>
+    <a href="{{ url_for('register') }}" class="btn btn-outline-primary btn-lg px-5">
+      <i class="bi bi-person-plus me-2"></i>Register
+    </a>
+  </div>
+  <div class="row g-4 mt-4">
+    <div class="col-md-4">
+      <div class="card p-4 h-100">
+        <i class="bi bi-building display-5 text-primary mb-3"></i>
+        <h5 class="fw-bold">For Companies</h5>
+        <p class="text-muted">Register, post placement drives, and find the best talent.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card p-4 h-100">
+        <i class="bi bi-person-badge display-5 text-success mb-3"></i>
+        <h5 class="fw-bold">For Students</h5>
+        <p class="text-muted">Browse drives, apply, and track your application status.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card p-4 h-100">
+        <i class="bi bi-shield-check display-5 text-warning mb-3"></i>
+        <h5 class="fw-bold">Admin Oversight</h5>
+        <p class="text-muted">The placement cell approves companies and drives.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

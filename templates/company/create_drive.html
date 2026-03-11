@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Post New Drive{% endblock %}
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 sidebar p-3 d-none d-md-block">
+      <p class="text-white-50 small fw-bold text-uppercase px-2 mb-1">Company Menu</p>
+      <a href="{{ url_for('company_dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+      <a href="{{ url_for('company_profile') }}"><i class="bi bi-building me-2"></i>Profile</a>
+      <a href="{{ url_for('company_create_drive') }}" class="active"><i class="bi bi-plus-circle me-2"></i>Post Drive</a>
+      <hr style="border-color:#444;">
+      <a href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a>
+    </div>
+    <div class="col-md-10 p-4">
+      <h2 class="fw-bold mb-4"><i class="bi bi-plus-circle me-2 text-primary"></i>Post New Placement Drive</h2>
+      <div class="card" style="max-width:700px;">
+        <div class="card-body">
+          <form method="POST" action="{{ url_for('company_create_drive') }}">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Job Title <span class="text-danger">*</span></label>
+              <input type="text" name="job_title" class="form-control" placeholder="e.g. Software Engineer" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Job Description <span class="text-danger">*</span></label>
+              <textarea name="job_description" class="form-control" rows="5" required
+                        placeholder="Describe the role and responsibilities..."></textarea>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Eligibility Criteria</label>
+              <textarea name="eligibility_criteria" class="form-control" rows="3"
+                        placeholder="e.g. CGPA >= 7.0, No backlogs..."></textarea>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">Package / CTC</label>
+                <input type="text" name="package" class="form-control" placeholder="e.g. 12 LPA">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">Job Location</label>
+                <input type="text" name="location" class="form-control" placeholder="e.g. Bangalore">
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="form-label fw-semibold">Application Deadline <span class="text-danger">*</span></label>
+              <input type="date" name="application_deadline" class="form-control" required>
+            </div>
+            <div class="alert alert-info small">
+              <i class="bi bi-info-circle me-1"></i>
+              This drive will be reviewed by admin before students can apply.
+            </div>
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary"><i class="bi bi-send me-1"></i>Submit for Approval</button>
+              <a href="{{ url_for('company_dashboard') }}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

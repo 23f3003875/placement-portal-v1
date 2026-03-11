@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 sidebar p-3 d-none d-md-block">
+      <p class="text-white-50 small fw-bold text-uppercase px-2 mb-1">Student Menu</p>
+      <a href="{{ url_for('student_dashboard') }}" class="active"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+      <a href="{{ url_for('student_drives') }}"><i class="bi bi-briefcase me-2"></i>Browse Drives</a>
+      <a href="{{ url_for('student_applications') }}"><i class="bi bi-file-earmark-text me-2"></i>My Applications</a>
+      <a href="{{ url_for('student_history') }}"><i class="bi bi-trophy me-2"></i>Placement History</a>
+      <a href="{{ url_for('student_profile') }}"><i class="bi bi-person me-2"></i>My Profile</a>
+      <hr style="border-color:#444;">
+      <a href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a>
+    </div>
+    <div class="col-md-10 p-4">
+      <h2 class="fw-bold mb-1">Welcome, {{ session['user_name'] }}!</h2>
+        {{ profile['branch'] or 'Update your profile to add branch' }} |
+        {{ profile['roll_number'] or 'No roll number set' }}
+      </p>
+      <div class="row g-4">
+        <div class="col-lg-7">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="fw-bold mb-0"><i class="bi bi-briefcase me-2 text-primary"></i>Open Drives</h5>
+            <a href="{{ url_for('student_drives') }}" class="btn btn-outline-primary btn-sm">View All</a>
+          </div>
+          {% if available_drives %}
+            {% for drive in available_drives[:5] %}
+            <div class="card mb-2">
+              <div class="card-body py-2">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <strong>{{ drive['job_title'] }}</strong>
+                    <span class="text-muted ms-2 small">– {{ drive['company_name'] }}</span><br>
+                    <small class="text-muted">
+                      <i class="bi bi-geo-alt me-1"></i>{{ drive['location'] or 'TBD' }} &nbsp;|&nbsp;
+                      <i class="bi bi-currency-rupee"></i>{{ drive['package'] or 'TBD' }} &nbsp;|&nbsp;
+                      Deadline: {{ drive['application_deadline'] }}
+                    </small>
+                  </div>
+                  <div>
+                    {% if drive['id'] in applied_drive_ids %}
+                      <span class="badge bg-success">Applied</span>
+                    {% elif drive['application_deadline'] < today %}
+                      <span class="badge bg-secondary">Closed</span>
+                    {% else %}
+                      <a href="{{ url_for('student_drive_detail', did=drive['id']) }}"
+                         class="btn btn-primary btn-sm">Apply</a>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+          <div class="text-muted text-center py-4">
+            <i class="bi bi-briefcase display-4"></i>
+            <p class="mt-2">No open drives right now.</p>
+          </div>
+          {% endif %}
+        </div>
+        <div class="col-lg-5">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="fw-bold mb-0"><i class="bi bi-file-earmark-text me-2 text-success"></i>My Applications</h5>
+            <a href="{{ url_for('student_applications') }}" class="btn btn-outline-success btn-sm">View All</a>
+          </div>
+          {% if my_applications %}
+            {% for app in my_applications %}
+            <div class="card mb-2">
+              <div class="card-body py-2">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <strong>{{ app['job_title'] }}</strong><br>
+                    <small class="text-muted">{{ app['company_name'] }}</small>
+                  </div>
+                  <span class="badge badge-{{ app['status'] }} align-self-center">
+                    {{ app['status'] | capitalize }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+          <div class="text-muted text-center py-4">
+            <i class="bi bi-file-earmark display-4"></i>
+            <p class="mt-2">No applications yet.</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

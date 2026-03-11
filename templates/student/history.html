@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Placement History{% endblock %}
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 sidebar p-3 d-none d-md-block">
+      <p class="text-white-50 small fw-bold text-uppercase px-2 mb-1">Student Menu</p>
+      <a href="{{ url_for('student_dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+      <a href="{{ url_for('student_drives') }}"><i class="bi bi-briefcase me-2"></i>Browse Drives</a>
+      <a href="{{ url_for('student_applications') }}"><i class="bi bi-file-earmark-text me-2"></i>My Applications</a>
+      <a href="{{ url_for('student_history') }}" class="active"><i class="bi bi-trophy me-2"></i>Placement History</a>
+      <a href="{{ url_for('student_profile') }}"><i class="bi bi-person me-2"></i>My Profile</a>
+      <hr style="border-color:#444;">
+      <a href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a>
+    </div>
+    <div class="col-md-10 p-4">
+      <h2 class="fw-bold mb-4"><i class="bi bi-trophy me-2 text-warning"></i>Placement History</h2>
+      {% if placements %}
+      <div class="alert alert-success">
+        Congratulations! You have been placed in <strong>{{ placements | length }}</strong> drive(s).
+      </div>
+      <div class="row g-3">
+        {% for p in placements %}
+        <div class="col-md-6">
+          <div class="card border-success">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-2">
+                <i class="bi bi-patch-check-fill text-success display-6 me-3"></i>
+                <div>
+                  <h5 class="fw-bold mb-0">{{ p['job_title'] }}</h5>
+                  <p class="text-muted mb-0">{{ p['company_name'] }}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row text-center">
+                <div class="col-4">
+                  <div class="text-muted small">Package</div>
+                  <div class="fw-bold">{{ p['package'] or '—' }}</div>
+                </div>
+                <div class="col-4">
+                  <div class="text-muted small">Location</div>
+                  <div class="fw-bold">{{ p['location'] or '—' }}</div>
+                </div>
+                <div class="col-4">
+                  <div class="text-muted small">Date</div>
+                  <div class="fw-bold">{{ p['applied_at'][:7] }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-center py-5 text-muted">
+        <i class="bi bi-trophy display-4"></i>
+        <h5 class="mt-3">No placement records yet</h5>
+        <a href="{{ url_for('student_drives') }}" class="btn btn-primary">Browse Drives</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}{{ drive['job_title'] }}{% endblock %}
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 sidebar p-3 d-none d-md-block">
+      <p class="text-white-50 small fw-bold text-uppercase px-2 mb-1">Student Menu</p>
+      <a href="{{ url_for('student_dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+      <a href="{{ url_for('student_drives') }}" class="active"><i class="bi bi-briefcase me-2"></i>Browse Drives</a>
+      <a href="{{ url_for('student_applications') }}"><i class="bi bi-file-earmark-text me-2"></i>My Applications</a>
+      <a href="{{ url_for('student_history') }}"><i class="bi bi-trophy me-2"></i>Placement History</a>
+      <a href="{{ url_for('student_profile') }}"><i class="bi bi-person me-2"></i>My Profile</a>
+      <hr style="border-color:#444;">
+      <a href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a>
+    </div>
+    <div class="col-md-10 p-4">
+      <a href="{{ url_for('student_drives') }}" class="btn btn-outline-secondary btn-sm mb-3">
+        <i class="bi bi-arrow-left me-1"></i>Back to Drives
+      </a>
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h2 class="fw-bold">{{ drive['job_title'] }}</h2>
+              <h5 class="text-muted mb-3">{{ drive['company_name'] }}</h5>
+              <div class="row g-3 mb-4">
+                <div class="col-sm-6">
+                  <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                  <strong>Location:</strong> {{ drive['location'] or 'Not specified' }}
+                </div>
+                <div class="col-sm-6">
+                  <i class="bi bi-cash-stack text-success me-2"></i>
+                  <strong>Package:</strong> {{ drive['package'] or 'Not disclosed' }}
+                </div>
+                <div class="col-sm-6">
+                  <i class="bi bi-calendar-event text-danger me-2"></i>
+                  <strong>Deadline:</strong> {{ drive['application_deadline'] }}
+                </div>
+                <div class="col-sm-6">
+                  <i class="bi bi-building text-info me-2"></i>
+                  <strong>Website:</strong>
+                  {% if drive['website'] %}
+                    <a href="{{ drive['website'] }}" target="_blank">{{ drive['website'] }}</a>
+                  {% else %}—{% endif %}
+                </div>
+              </div>
+              <h6 class="fw-bold">Job Description</h6>
+              <p class="text-muted" style="white-space:pre-line;">{{ drive['job_description'] }}</p>
+              {% if drive['eligibility_criteria'] %}
+              <h6 class="fw-bold mt-3">Eligibility Criteria</h6>
+              <p class="text-muted" style="white-space:pre-line;">{{ drive['eligibility_criteria'] }}</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-body">
+              {% if already_applied %}
+              <div class="text-center py-3">
+                <i class="bi bi-check-circle-fill display-4 text-success"></i>
+                <h5 class="mt-2 fw-bold">Already Applied!</h5>
+                <a href="{{ url_for('student_applications') }}" class="btn btn-outline-primary btn-sm">Track Status</a>
+              </div>
+              {% elif drive['application_deadline'] < today %}
+              <div class="text-center py-3">
+                <i class="bi bi-clock-history display-4 text-secondary"></i>
+                <h5 class="mt-2 fw-bold">Applications Closed</h5>
+              </div>
+              {% else %}
+              <h5 class="fw-bold mb-3">Apply Now</h5>
+              <form method="POST" action="{{ url_for('student_apply', did=drive['id']) }}">
+                <div class="mb-3">
+                  <label class="form-label">Cover Note (Optional)</label>
+                  <textarea name="cover_note" class="form-control" rows="4"
+                            placeholder="Why are you a good fit?"></textarea>
+                </div>
+                <div class="alert alert-info small">
+                  <i class="bi bi-info-circle me-1"></i>Keep your profile and resume up to date.
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                  <i class="bi bi-send me-2"></i>Submit Application
+                </button>
+              </form>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 sidebar p-3 d-none d-md-block">
+      <p class="text-white-50 small fw-bold text-uppercase px-2 mb-1">Student Menu</p>
+      <a href="{{ url_for('student_dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+      <a href="{{ url_for('student_drives') }}"><i class="bi bi-briefcase me-2"></i>Browse Drives</a>
+      <a href="{{ url_for('student_applications') }}"><i class="bi bi-file-earmark-text me-2"></i>My Applications</a>
+      <a href="{{ url_for('student_history') }}"><i class="bi bi-trophy me-2"></i>Placement History</a>
+      <a href="{{ url_for('student_profile') }}" class="active"><i class="bi bi-person me-2"></i>My Profile</a>
+      <hr style="border-color:#444;">
+      <a href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a>
+    </div>
+    <div class="col-md-10 p-4">
+      <h2 class="fw-bold mb-4"><i class="bi bi-person me-2 text-primary"></i>My Profile</h2>
+      <div class="row g-4">
+
+        <!-- Edit form -->
+        <div class="col-lg-7">
+          <div class="card">
+            <div class="card-header bg-white fw-bold">Edit Profile Information</div>
+            <div class="card-body">
+              <form method="POST" action="{{ url_for('student_profile') }}">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Full Name</label>
+                    <input type="text" name="name" class="form-control"
+                           value="{{ session['user_name'] }}" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Email</label>
+                    <input type="email" class="form-control"
+                           value="{{ user['email'] }}" disabled>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Roll Number</label>
+                    <input type="text" class="form-control"
+                           value="{{ profile['roll_number'] or '' }}" disabled>
+                    <div class="form-text">Contact admin to change roll number.</div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Phone Number</label>
+                    <input type="tel" name="phone" class="form-control"
+                           value="{{ profile['phone'] or '' }}">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Branch / Department</label>
+                    <input type="text" name="branch" class="form-control"
+                           value="{{ profile['branch'] or '' }}"
+                           placeholder="e.g. Computer Science">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Semester</label>
+                    <select name="semester" class="form-select">
+                      <option value="">-- Select --</option>
+                      {% for i in range(1, 9) %}
+                      <option value="{{ i }}"
+                        {{ 'selected' if profile['semester'] == i|string }}>
+                        Semester {{ i }}
+                      </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">CGPA</label>
+                    <input type="number" name="cgpa" class="form-control"
+                           step="0.01" min="0" max="10"
+                           value="{{ profile['cgpa'] or '' }}"
+                           placeholder="e.g. 8.5">
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label fw-semibold">Skills</label>
+                    <input type="text" name="skills" class="form-control"
+                           value="{{ profile['skills'] or '' }}"
+                           placeholder="e.g. Python, Java, SQL">
+                    <div class="form-text">Comma-separated list.</div>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">
+                  <i class="bi bi-save me-1"></i>Save Profile
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resume + completeness -->
+        <div class="col-lg-5">
+          <div class="card">
+            <div class="card-header bg-white fw-bold">Resume</div>
+            <div class="card-body">
+              {% if profile['resume_file'] %}
+              <div class="alert alert-success d-flex align-items-center mb-3">
+                <i class="bi bi-file-earmark-check-fill me-2 fs-4"></i>
+                <div>
+                  Resume uploaded.<br>
+                  <a href="{{ url_for('static', filename='uploads/resumes/' + profile['resume_file']) }}"
+                     target="_blank" class="alert-link">View Current Resume</a>
+                </div>
+              </div>
+              {% else %}
+              <div class="alert alert-warning mb-3">
+                <i class="bi bi-exclamation-triangle me-1"></i>
+                No resume uploaded yet.
+              </div>
+              {% endif %}
+              <form method="POST" action="{{ url_for('student_upload_resume') }}"
+                    enctype="multipart/form-data">
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">Upload Resume</label>
+                  <input type="file" name="resume" class="form-control"
+                         accept=".pdf,.doc,.docx" required>
+                  <div class="form-text">PDF, DOC, or DOCX. Max 5 MB.</div>
+                </div>
+                <button type="submit" class="btn btn-success">
+                  <i class="bi bi-upload me-1"></i>
+                  {{ 'Replace Resume' if profile['resume_file'] else 'Upload Resume' }}
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Profile completeness - width set via JS to avoid Jinja2 % parsing issue -->
+          <div class="card mt-3">
+            <div class="card-body">
+              <h6 class="fw-bold">Profile Completeness</h6>
+              <div class="progress mb-2" style="height:10px;">
+                <div id="pct-bar"
+                  class="progress-bar {% if pct_filled >= 6 %}bg-success{% elif pct_filled >= 4 %}bg-warning{% else %}bg-danger{% endif %}"
+                  role="progressbar"
+                  data-width="{{ pct_value }}">
+                </div>
+              </div>
+              <small class="text-muted">{{ pct_filled }}/7 fields completed ({{ pct_value }})</small>
+            </div>
+          </div>
+          <script>
+            var bar = document.getElementById('pct-bar');
+            bar.style.width = bar.dataset.width;
+          </script>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
